@@ -1,49 +1,55 @@
 var CLIENT_ID = '244816293764-ra6duedqq0v0v5mfabq7cl2a8gn02i69.apps.googleusercontent.com';
-var SCOPES = 'https://www.googleapis.com/auth/drive';
+var SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
-/**
- * Called when the client library is loaded to start the auth flow.
- */
-function handleClientLoad() {
-    window.setTimeout(checkAuth, 1);
-}
+angular.module('driveApp', [ 'ngRoute' ]).run(function($location, $rootScope) {
 
-/**
- * Check if the current user has authorized the application.
- */
-function checkAuth() {
-    gapi.auth.authorize({
-        'client_id' : CLIENT_ID,
-        'scope' : SCOPES,
-        'immediate' : true
-    }, handleAuthResult);
-}
-
-/**
- * Called when authorization server replies.
- * 
- * @param {Object}
- *            authResult Authorization result.
- */
-function handleAuthResult(authResult) {
-
-    if (authResult && !authResult.error) {
-        angular.element($('#files-div').get(0)).scope().ctrl.refresh();
-    } else {
-        // No access token could be retrieved, show the button to start the
-        // authorization flow.
+    window.tryAuth = function() {
 
         gapi.auth.authorize({
             'client_id' : CLIENT_ID,
             'scope' : SCOPES,
-            'immediate' : false
+            'immediate' : true
         }, handleAuthResult);
 
-    }
-}
+        /**
+         * Called when authorization server replies.
+         * 
+         * @param {Object}
+         *            authResult Authorization result.
+         */
+        function handleAuthResult(authResult) {
 
-var driveApp = angular.module('driveApp', []).run(function() {
+            if (authResult && !authResult.error) {
+                $location.path('/app');
+                $rootScope.$apply();
+            } else {
+                // No access token could be retrieved, show the
+                // button to start the
+                // authorization flow.
 
+                $location.path('/login');
+
+                gapi.auth.authorize({
+                    'client_id' : CLIENT_ID,
+                    'scope' : SCOPES,
+                    'immediate' : false
+                }, handleAuthResult);
+
+            }
+        }
+    };
+
+    $.getScript('https://apis.google.com/js/client.js?onload=tryAuth');
+
+}).config(function($locationProvider, $routeProvider) {
+    // $locationProvider.html5Mode(true);
+    $routeProvider.when('/app', {
+        templateUrl : 'app.html',
+    }).when('/login', {
+        templateUrl : 'login.html',
+    }).otherwise({
+        redirectTo : '/login'
+    });
 }).filter('starred', function() {
     return function(input) {
         var arr = [];

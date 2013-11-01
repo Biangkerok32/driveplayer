@@ -161,6 +161,7 @@ var FilesController = function($scope, $rootScope) {
         return item.mimeType == 'application/vnd.google-apps.folder';
     };
 
+    this.refresh();
 };
 
 var PlayerController = function($scope, $rootScope) {
@@ -234,5 +235,22 @@ var PlayerController = function($scope, $rootScope) {
             this.state = 'play';
         }
     };
+
+};
+
+var ProfileController = function($scope) {
+
+    $scope.email = "";
+
+    var init = function() {
+        gapi.client.oauth2.userinfo.v2.me.get().execute(function(me) {
+            $scope.email = me.email;
+        });
+    };
+
+    gapi.client.load('oauth2', 'v2', init);
+};
+
+var LoginController = function($location) {
 
 };
