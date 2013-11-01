@@ -40,7 +40,10 @@ var FilesController = function($scope, $rootScope) {
             var contentType = fileData.type || 'application/octet-stream';
             var metadata = {
                 'title' : fileData.name,
-                'mimeType' : contentType
+                'mimeType' : contentType,
+                'parents' : [ {
+                    id : self.folderId
+                } ]
             };
 
             var base64Data = btoa(reader.result);

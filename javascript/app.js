@@ -71,4 +71,20 @@ var driveApp = angular.module('driveApp', []).run(function() {
         }
         return arr;
     };
+}).filter('orderFiles', function() {
+    return function(input) {
+        input.sort(function(a, b) {
+            var isAFolder = a.mimeType == 'application/vnd.google-apps.folder';
+            var isBFolder = b.mimeType == 'application/vnd.google-apps.folder';
+            if (isAFolder && !isBFolder) {
+                return -1;
+            }
+            if (!isAFolder && isBFolder) {
+                return 1;
+            }
+
+            return a.title.localeCompare(b.title);
+        });
+        return input;
+    };
 });
