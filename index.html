@@ -1,0 +1,102 @@
+<!doctype html>
+<html ng-app="driveApp">
+<head>
+<link href="css/semantic.css" rel="stylesheet" type="text/css" />
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+
+<script src="javascript/vendors/angular.min.js"></script>
+<script src="javascript/vendors/angular-animate.min.js"></script>
+<script src="javascript/vendors/jquery-1.10.2.min.js"></script>
+<script src="javascript/vendors/semantic.min.js"></script>
+<script src="javascript/vendors/taffy-min.js"></script>
+<script src="javascript/vendors/soundmanager2.js"></script>
+<script src="javascript/db.js"></script>
+<script src="javascript/app.js"></script>
+<script src="javascript/controllers.js"></script>
+</head>
+<body>
+
+	<div class="ui menu" ng-controller="PlayerController">
+		<div class="item" style="width: 50%;">
+			<div class="ui teal progress">
+				<div class="bar" style="width: {{playPercent"></div>
+			</div>
+		</div>
+		<div class="menu right">
+
+			<div class="item">
+				<input type="range" min="0" max="100" ng-model="volume" />
+			</div>
+			<div class="item">
+				<div class="ui buttons">
+					<div ng-click="togglePlay()" class="ui circular icon button">
+						<i class="icon" ng-class="state"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="files-div" class="ui segment"
+		ng-controller="FilesController as ctrl">
+
+		<div class="ui dimmer" ng-class="ctrl.loading">
+			<div class="ui text loader">Loading</div>
+		</div>
+
+		<div class="ui right floated header">
+
+			<button class="ui button" ng-click="ctrl.refresh()">Refresh</button>
+
+			<button class="ui right teal labeled icon button"
+				ng-click="ctrl.addFile()">
+				<i class="right plus icon"></i> Add file
+			</button>
+			<input type="file" id="input-file"
+				style="position: absolute; top: -1000px;" />
+			<div class="ui input">
+				<input type="text" ng-model="search" placeholder="Search..." />
+			</div>
+
+		</div>
+
+		<div class="ui breadcrumb left floated top">
+			<a ng-repeat="folder in ctrl.folderStack"
+				ng-class=""
+				href="#"
+				ng-click="ctrl.openFolder(folder.id, folder.name, $index)"
+				class="section">{{folder.name}}
+				<div class="divider">/</div>
+			</a>
+		</div>
+
+		<table class="ui table attached segment">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Status</th>
+					<th>Notes</th>
+					<th>Notes</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="repeated-item"
+					ng-repeat="item in ctrl.items | searchTitle:search | orderBy:'title'">
+					<td><img ng-src="{{item.iconLink}}" /></td>
+					<td><a ng-hide="ctrl.isFolder(item)" class="ui mini button"
+						href="#" ng-click="ctrl.play(item.title, item.webContentLink)">{{item.title}}</a>
+
+						<a ng-show="ctrl.isFolder(item)" class="ui mini button" href="#"
+						ng-click="ctrl.openFolder(item.id, item.title)">{{item.title}}</a></td>
+					<td><span ng-show="ctrl.isFolder(item)">{{item.id}}</span></td>
+					<td>{{item.lastModifyingUserName}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
+	<script type="text/javascript"
+		src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
+</body>
+</html>
