@@ -47,12 +47,8 @@ var FilesController = function($scope, $rootScope) {
             };
 
             var base64Data = btoa(reader.result);
-            var multipartRequestBody = delimiter
-                    + 'Content-Type: application/json\r\n\r\n'
-                    + JSON.stringify(metadata) + delimiter + 'Content-Type: '
-                    + contentType + '\r\n'
-                    + 'Content-Transfer-Encoding: base64\r\n' + '\r\n'
-                    + base64Data + close_delim;
+            var multipartRequestBody = delimiter + 'Content-Type: application/json\r\n\r\n' + JSON.stringify(metadata) + delimiter + 'Content-Type: '
+                    + contentType + '\r\n' + 'Content-Transfer-Encoding: base64\r\n' + '\r\n' + base64Data + close_delim;
 
             var request = gapi.client.request({
                 'path' : '/upload/drive/v2/files',
@@ -61,8 +57,7 @@ var FilesController = function($scope, $rootScope) {
                     'uploadType' : 'multipart'
                 },
                 'headers' : {
-                    'Content-Type' : 'multipart/mixed; boundary="' + boundary
-                            + '"'
+                    'Content-Type' : 'multipart/mixed; boundary="' + boundary + '"'
                 },
                 'body' : multipartRequestBody
             });
@@ -83,34 +78,31 @@ var FilesController = function($scope, $rootScope) {
         $scope.$apply();
 
         gapi.client
-                .load(
-                        'drive',
-                        'v2',
-                        function() {
+                .load('drive', 'v2', function() {
 
-                            var request = gapi.client
-                                    .request({
-                                        'path' : '/drive/v2/files',
-                                        'method' : 'GET',
-                                        'params' : {
-                                            "q" : "'"
-                                                    + self.folderId
-                                                    + "' in parents and (mimeType = 'audio/mpeg' or mimeType = 'audio/mp3' or mimeType = 'application/vnd.google-apps.folder')",
-                                            "maxResults" : 100
-                                        }
-                                    });
-
-                            request.execute(function(res) {
-                                console.log(res.items);
-                                self.items = res.items;
-                                self.loading = "";
-                                $scope.$apply();
+                    var request = gapi.client
+                            .request({
+                                'path' : '/drive/v2/files',
+                                'method' : 'GET',
+                                'params' : {
+                                    "q" : "'"
+                                            + self.folderId
+                                            + "' in parents and trashed = false and (mimeType = 'audio/mpeg' or mimeType = 'audio/mp3' or mimeType = 'application/vnd.google-apps.folder')",
+                                    "maxResults" : 100
+                                }
                             });
-                        });
+
+                    request.execute(function(res) {
+                        self.items = res.items;
+                        self.cloneItems = self.items;
+                        self.loading = "";
+                        $scope.$apply();
+                    });
+                });
 
     };
 
-    this.fileInput = $('#input-file');
+    this.fileInput = jQuery('#input-file');
     this.fileInput.change(function(e) {
         uploadFile(e);
     });
@@ -238,17 +230,55 @@ var PlayerController = function($scope, $rootScope) {
 
 };
 
-var ProfileController = function($scope) {
+var ProfileController = function($scope, lightDb) {
 
     $scope.email = "";
+
+    $scope.favourites = [];
 
     var init = function() {
         gapi.client.oauth2.userinfo.v2.me.get().execute(function(me) {
             $scope.email = me.email;
         });
+
+        lightDb.get('favs').then(function(db) {
+            $scope.favourites = db().get();
+            $scope.$apply();
+        });
+
     };
 
     gapi.client.load('oauth2', 'v2', init);
+
+    $scope.removeFavourite = function(fav) {
+        lightDb.get('favs').then(function(db) {
+            db(fav.___id).remove();
+
+            $scope.favourites = db().get();
+        });
+    };
+
+    $scope.addFavourite = function(newName) {
+
+        if (!newName) {
+            return;
+        }
+
+        lightDb.get('favs').then(function(db) {
+            db.insert({
+                name : newName,
+                items : []
+            });
+
+            $scope.favourites = db().get();
+        });
+
+        $scope.newFavourite = '';
+    };
+
+    $scope.onAddFavItem = function(event, ui) {
+        lightDb.save();
+    };
 };
 
 var LoginController = function($location) {

@@ -2,22 +2,30 @@
 <html ng-app="driveApp">
 <head>
 <link href="css/semantic.css" rel="stylesheet" type="text/css" />
+<link href="css/jqueryui/jquery.ui.all.css" type="text/css" rel="stylesheet" />
 <link href="css/style.css" rel="stylesheet" type="text/css" />
-
+   
+   <title>DrivePlayer</title>
 
 </head>
 <body>
 
 	<div ng-view></div>
 	
-	<script src="javascript/vendors/angular-1.2.0-rc.3/angular.js"></script>
-	<script src="javascript/vendors/angular-1.2.0-rc.3/angular-route.js"></script>
 	<script src="javascript/vendors/jquery-1.10.2.min.js"></script>
+	<script src="javascript/vendors/angular-1.2.0-rc.3/angular.js"></script>
+	<script src="javascript/vendors/angular-1.2.0-rc.3/angular-route.js"></script>	
+	<script>
+		jQuery.noConflict();
+	</script>
+	<script src="javascript/vendors/jquery-ui.min.js"></script>
 	<script src="javascript/vendors/semantic.min.js"></script>
 	<script src="javascript/vendors/taffy-min.js"></script>
 	<script src="javascript/vendors/soundmanager2.js"></script>
-	<script src="javascript/db.js"></script>
+	<script src="javascript/vendors/angular-dragdrop.js"></script>
+	
 	<script src="javascript/app.js"></script>
+	<script src="javascript/db.js"></script>
 	<script src="javascript/controllers.js"></script>
 </body>
 </html>

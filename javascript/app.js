@@ -1,7 +1,7 @@
 var CLIENT_ID = '244816293764-ra6duedqq0v0v5mfabq7cl2a8gn02i69.apps.googleusercontent.com';
 var SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email';
 
-angular.module('driveApp', [ 'ngRoute' ]).run(function($location, $rootScope) {
+var driveApp = angular.module('driveApp', [ 'ngRoute', 'ngDragDrop' ]).run(function($rootScope, $location) {
 
     window.tryAuth = function() {
 
@@ -39,7 +39,9 @@ angular.module('driveApp', [ 'ngRoute' ]).run(function($location, $rootScope) {
         }
     };
 
-    $.getScript('https://apis.google.com/js/client.js?onload=tryAuth');
+    jQuery.getScript('https://apis.google.com/js/client.js?onload=tryAuth');
+
+    $location.path('/login');
 
 }).config(function($locationProvider, $routeProvider) {
     // $locationProvider.html5Mode(true);

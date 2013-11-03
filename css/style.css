@@ -2,6 +2,27 @@
 
 body{
 	font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+.file-list.ui.items > .item{
+	height: 75px;
+	width: 100px;
+	min-height: 0;
+	min-width: 0;
+	text-align: center;
+	padding: 10px;
+	margin: 5px;
+}
+
+.file-list.ui.items > .item .title{
+	overflow: hidden;
+	width: 100%;
+	text-overflow: ellipsis;
+	display: block;
+	word-wrap: break-word;
+	font-size: 0.8rem;
 }
 
 #player-menu{
